@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.0.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"f-unction.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"flat"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="CF20A [BerOS file system] 原题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CF20A题解">
+<meta property="og:url" content="http://f-unction.github.io/2020/05/04/cf20a-answer/index.html">
+<meta property="og:site_name" content="F_Unction&#39;s Blog">
+<meta property="og:description" content="CF20A [BerOS file system] 原题">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-04T04:03:30.000Z">
+<meta property="article:modified_time" content="2020-08-02T07:41:03.760Z">
+<meta property="article:author" content="F_Unction">
+<meta property="article:tag" content="OI">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://f-unction.github.io/2020/05/04/cf20a-answer/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CF20A题解 | F_Unction's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">F_Unction's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://f-unction.github.io/2020/05/04/cf20a-answer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="F_Unction">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="F_Unction's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CF20A题解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-04 12:03:30" itemprop="dateCreated datePublished" datetime="2020-05-04T12:03:30+08:00">2020-05-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-08-02 15:41:03" itemprop="dateModified" datetime="2020-08-02T15:41:03+08:00">2020-08-02</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>CF20A [BerOS file system]</p>
+<h2 id="原题"><a href="#原题" class="headerlink" title="原题"></a>原题</h2><a id="more"></a>
+
+<blockquote>
+<h3 id="A-BerOS-file-system"><a href="#A-BerOS-file-system" class="headerlink" title="A. BerOS file system"></a>A. BerOS file system</h3><p>time limit per test: 2 seconds</p>
+<p>memory limit per test: 64 megabytes</p>
+<p>input: standard input</p>
+<p>output: standard output</p>
+<p>The new operating system BerOS has a nice feature. It is possible to use any number of characters ‘/‘ as a delimiter in path instead of one traditional ‘/‘. For example, strings //usr///local//nginx/sbin// and /usr/local/nginx///sbin are equivalent. The character ‘/‘ (or some sequence of such characters) at the end of the path is required only in case of the path to the root directory, which can be represented as single character ‘/‘.</p>
+<p>A path called normalized if it contains the smallest possible number of characters ‘/‘.</p>
+<p>Your task is to transform a given path to the normalized form.</p>
+<h4 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h4><p>The first line of the input contains only lowercase Latin letters and character ‘/‘ — the path to some directory. All paths start with at least one character ‘/‘. The length of the given line is no more than 100 characters, it is not empty.</p>
+<h4 id="Output"><a href="#Output" class="headerlink" title="Output"></a>Output</h4><p>The path in normalized form.</p>
+<h4 id="Examples"><a href="#Examples" class="headerlink" title="Examples"></a>Examples</h4><h5 id="input"><a href="#input" class="headerlink" title="input"></a>input</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;usr&#x2F;&#x2F;&#x2F;local&#x2F;&#x2F;nginx&#x2F;sbin</span><br></pre></td></tr></table></figure>
+
+<h5 id="output"><a href="#output" class="headerlink" title="output"></a>output</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;sbin</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p>意思差不多就是要把这个给你的字符串里面重复的<code>/</code>删去 例子很直观了</p>
+<p>一道简单的不能再简单的红题 让我做出了花样</p>
+<p>很多用word等软件给文档<strong>去空行</strong>过的同学们肯定印象深刻 把<code>^p^p</code> 替换成<code>^p</code> 多点两次就行了 这里也可以用到这种思想 (word中<code>^p</code>就是换行的意思)</p>
+<p> 替换 就是<code>replace</code> 查了cppreference 发现还真有这么个 <a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/string/basic_string/replace">std::string::replace</a> 不过不像C#的<code>string.replace(char, char)</code>那么简单 这个<code>std::string::replace(int pos, int count, string str)</code>是 把<code>string</code>中从<code>pos</code>开始的<code>count</code>个字符替换成<code>str</code> </p>
+<h3 id="替换"><a href="#替换" class="headerlink" title="替换"></a>替换</h3><p>其实也简单 于是就有了</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>); <span class="comment">//把 //(两个字符)替换成/</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="重复"><a href="#重复" class="headerlink" title="重复"></a>重复</h3><p>但是回想去空行的时候 如果有连续的空行 就要多点两次</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">L1:</span><br><span class="line">a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) != <span class="built_in">string</span>::npos) <span class="comment">//string::npos就是找不到了</span></span><br><span class="line">    <span class="keyword">goto</span> L1; <span class="comment">//别骂我用goto了QAQ</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="空路径特判"><a href="#空路径特判" class="headerlink" title="空路径特判"></a>空路径特判</h3><p>然后RE了 因为题目中说</p>
+<blockquote>
+<p>All paths start with at least one character ‘/‘.</p>
+</blockquote>
+<p>所以因为可能路径中并没有<code>//</code> 这样子替换就会RE</p>
+<p>于是</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">L1:</span><br><span class="line">    <span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">        <span class="keyword">goto</span> L2;</span><br><span class="line">    a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    <span class="keyword">goto</span> L1;</span><br><span class="line">L2:</span><br></pre></td></tr></table></figure>
+
+<h3 id="根目录特判"><a href="#根目录特判" class="headerlink" title="根目录特判"></a>根目录特判</h3><p>然后WA了</p>
+<p>因为如果整个路径就一个<code>/</code> 那就会被去掉 于是</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">L1:</span><br><span class="line">    <span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">        <span class="keyword">goto</span> L2;</span><br><span class="line">    a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    <span class="keyword">goto</span> L1;</span><br><span class="line">L2:</span><br><span class="line">    <span class="keyword">if</span> (a[a.length() - <span class="number">1</span>] == <span class="string">&#x27;/&#x27;</span> &amp;&amp; a.length() != <span class="number">1</span>) <span class="comment">//加了个if</span></span><br><span class="line">        a = a.substr(<span class="number">0</span>, a.length() - <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+<p>终于AC了QAQ</p>
+<h2 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h2><p>完整代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">string</span> a;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; a;</span><br><span class="line">L1:</span><br><span class="line">    <span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">        <span class="keyword">goto</span> L2;</span><br><span class="line">    a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    <span class="keyword">goto</span> L1;</span><br><span class="line">L2:</span><br><span class="line">    <span class="keyword">if</span> (a[a.length() - <span class="number">1</span>] == <span class="string">&#x27;/&#x27;</span> &amp;&amp; a.length() != <span class="number">1</span>)</span><br><span class="line">        a = a.substr(<span class="number">0</span>, a.length() - <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; a;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/OI/" rel="tag"># OI</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/01/fix-time-on-ubuntu20-04/" rel="prev" title="Ubuntu20.04和Windows10双系统同步时间">
+      <i class="fa fa-chevron-left"></i> Ubuntu20.04和Windows10双系统同步时间
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/08/03/fast-id-pool/" rel="next" title="快速顺序ID池">
+      快速顺序ID池 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">原题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#A-BerOS-file-system"><span class="nav-number">1.1.</span> <span class="nav-text">A. BerOS file system</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Input"><span class="nav-number">1.1.1.</span> <span class="nav-text">Input</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Output"><span class="nav-number">1.1.2.</span> <span class="nav-text">Output</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Examples"><span class="nav-number">1.1.3.</span> <span class="nav-text">Examples</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#input"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">input</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#output"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">output</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">题解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2"><span class="nav-number">2.1.</span> <span class="nav-text">替换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D"><span class="nav-number">2.2.</span> <span class="nav-text">重复</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E8%B7%AF%E5%BE%84%E7%89%B9%E5%88%A4"><span class="nav-number">2.3.</span> <span class="nav-text">空路径特判</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E7%9B%AE%E5%BD%95%E7%89%B9%E5%88%A4"><span class="nav-number">2.4.</span> <span class="nav-text">根目录特判</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">完整代码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="F_Unction"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">F_Unction</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/F-Unction" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;F-Unction" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:f_unction@qq.com" title="E-Mail → mailto:f_unction@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      友链
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://erxl.github.io/" title="https:&#x2F;&#x2F;erxl.github.io&#x2F;" rel="noopener" target="_blank">Erxl's Blog</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://www.cnblogs.com/ysomething/" title="https:&#x2F;&#x2F;www.cnblogs.com&#x2F;ysomething&#x2F;" rel="noopener" target="_blank">ysomething's Blog</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+  <div class="beian"><a href="http://www.beian.miit.gov.cn/" rel="noopener" target="_blank">沪ICP备-老子不备案-号 </a>
+      <img src="http://www.beian.gov.cn/portal/download" style="display: inline-block;"><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=%E8%80%81%E5%AD%90%E4%B8%8D%E5%A4%87%E6%A1%88" rel="noopener" target="_blank">公安备案号 老子不备案 </a>
+  </div>
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">F_Unction</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,0' opacity='0.5' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : '421f8145603b04e3d5bf',
+      clientSecret: '9ec02a0ef53e1c2c524bf8a932794b30f7b1e7a4',
+      repo        : 'Blog-Comments',
+      owner       : 'F-Unction',
+      admin       : ['F-Unction'],
+      id          : 'f5829cc8c4673190034d2bdcc69de818',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+  
+  
+    <script src="/js/cursor/fireworks.js"></script>
+  
+
+
+
+
+  <script src="/js/activate-power-mode.min.js"></script>
+  <script>
+    POWERMODE.colorful = true;
+    POWERMODE.shake = false;
+    document.body.addEventListener('input', POWERMODE);
+  </script>
+
+
+  
+</body>
+</html>
