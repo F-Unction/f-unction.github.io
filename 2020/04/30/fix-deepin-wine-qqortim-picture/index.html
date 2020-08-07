@@ -225,6 +225,13 @@
               </span>
 
           
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
 
         </div>
       </header>
@@ -238,21 +245,21 @@
         <p>好不容易给Ubuntu装上了deepin-wine QQ 却发现<strong>头像都是复古头像 图片都加载不出来</strong></p>
 <p>然后发现只需要<strong>禁用IPv6</strong>就可以了(草)</p>
 <a id="more"></a>
-
-<h2 id="禁IPv6"><a href="#禁IPv6" class="headerlink" title="禁IPv6"></a>禁IPv6</h2><p>编辑<code>/etc/sysctl.conf</code></p>
+<h2 id="禁ipv6"><a class="markdownIt-Anchor" href="#禁ipv6"></a> 禁IPv6</h2>
+<p>编辑<code>/etc/sysctl.conf</code></p>
 <p>在尾部加入内容如下</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 禁用IPv6</span></span><br><span class="line">net.ipv6.conf.all.disable_ipv6 = 1</span><br><span class="line">net.ipv6.conf.default.disable_ipv6 = 1</span><br><span class="line">net.ipv6.conf.lo.disable_ipv6 = 1</span><br></pre></td></tr></table></figure>
-
-<h2 id="删除缓存"><a href="#删除缓存" class="headerlink" title="删除缓存"></a>删除缓存</h2><p>啊 然后你就<strong>删掉deepin-wine qq的缓存</strong></p>
+<h2 id="删除缓存"><a class="markdownIt-Anchor" href="#删除缓存"></a> 删除缓存</h2>
+<p>啊 然后你就<strong>删掉deepin-wine qq的缓存</strong></p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rm -rf ~/.deepinwine/Deepin-QQ</span><br></pre></td></tr></table></figure>
-
 <p>然后<strong>重新打开</strong>应该就行了 如果还不行 那就<strong>重启</strong> 如果还不行 那就再<strong>删除缓存</strong> 然后<strong>重新安装</strong>deepin-wine qq</p>
-<p><del>如果还不行 那就是你村子还没通网</del></p>
-<hr>
+<p><s>如果还不行 那就是你村子还没通网</s></p>
+<hr />
 <p>2020-5-1</p>
 <p>今天用着用着就翻车了</p>
 <p>刚刚换掉的那一遍还行 不过<strong>重启之后就挂了</strong></p>
-<h2 id="grub禁用IPv6"><a href="#grub禁用IPv6" class="headerlink" title="grub禁用IPv6"></a>grub禁用IPv6</h2><p>所以我们要用grub的方式禁用IPv6</p>
+<h2 id="grub禁用ipv6"><a class="markdownIt-Anchor" href="#grub禁用ipv6"></a> grub禁用IPv6</h2>
+<p>所以我们要用grub的方式禁用IPv6</p>
 <p>编辑<code>etc/default/grub</code></p>
 <p>把<code>GRUB_CMDLINE_LINUX=&quot;&quot;</code>修改为<code>GRUB_CMDLINE_LINUX=&quot;ipv6.disable=1&quot;</code> 然后重新清除缓存即可</p>
 
@@ -261,6 +268,23 @@
     
     
     
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>F_Unction
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://f-unction.github.io/2020/04/30/fix-deepin-wine-qqortim-picture/" title="deepin-wine中QQ或TIM不显示图片">http://f-unction.github.io/2020/04/30/fix-deepin-wine-qqortim-picture/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
@@ -339,7 +363,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A6%81IPv6"><span class="nav-number">1.</span> <span class="nav-text">禁IPv6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E7%BC%93%E5%AD%98"><span class="nav-number">2.</span> <span class="nav-text">删除缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#grub%E7%A6%81%E7%94%A8IPv6"><span class="nav-number">3.</span> <span class="nav-text">grub禁用IPv6</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A6%81ipv6"><span class="nav-number">1.</span> <span class="nav-text"> 禁IPv6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E7%BC%93%E5%AD%98"><span class="nav-number">2.</span> <span class="nav-text"> 删除缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#grub%E7%A6%81%E7%94%A8ipv6"><span class="nav-number">3.</span> <span class="nav-text"> grub禁用IPv6</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -355,14 +379,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -419,8 +443,31 @@
   </span>
   <span class="author" itemprop="copyrightHolder">F_Unction</span>
 </div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5f2abc3213f282af" async="async"></script>
+  </div>
 
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 
@@ -436,7 +483,7 @@
   
   
   <script color='0,0,0' opacity='0.5' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
-  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script size="350" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
@@ -498,6 +545,8 @@
 
 
 
+
+  
 
   
 

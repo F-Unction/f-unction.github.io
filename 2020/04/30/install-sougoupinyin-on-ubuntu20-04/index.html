@@ -225,6 +225,13 @@
               </span>
 
           
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
 
         </div>
       </header>
@@ -239,21 +246,20 @@
 <p>就比如<strong>搜狗输入法装不上</strong></p>
 <p>主要是因为20.04的软件仓库少点依赖 不过好在我们有大佬从UbuntuKylin提取的专用版搜狗输入法</p>
 <a id="more"></a>
-
-<h2 id="卸载自带ibus"><a href="#卸载自带ibus" class="headerlink" title="卸载自带ibus"></a>卸载自带ibus</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove ibus</span><br><span class="line">sudo apt-get purge ibus</span><br></pre></td></tr></table></figure>
-
-<h2 id="卸载键盘提示"><a href="#卸载键盘提示" class="headerlink" title="卸载键盘提示"></a>卸载键盘提示</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove indicator-keyboard</span><br></pre></td></tr></table></figure>
-
-<h2 id="安装fcitx"><a href="#安装fcitx" class="headerlink" title="安装fcitx"></a>安装fcitx</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install fcitx-table-wbpy fcitx-config-gtk</span><br><span class="line">im-config -n fcitx</span><br></pre></td></tr></table></figure>
-
+<h2 id="卸载自带ibus"><a class="markdownIt-Anchor" href="#卸载自带ibus"></a> 卸载自带ibus</h2>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove ibus</span><br><span class="line">sudo apt-get purge ibus</span><br></pre></td></tr></table></figure>
+<h2 id="卸载键盘提示"><a class="markdownIt-Anchor" href="#卸载键盘提示"></a> 卸载键盘提示</h2>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove indicator-keyboard</span><br></pre></td></tr></table></figure>
+<h2 id="安装fcitx"><a class="markdownIt-Anchor" href="#安装fcitx"></a> 安装fcitx</h2>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install fcitx-table-wbpy fcitx-config-gtk</span><br><span class="line">im-config -n fcitx</span><br></pre></td></tr></table></figure>
 <p>此处重启</p>
-<h2 id="下载搜狗输入法"><a href="#下载搜狗输入法" class="headerlink" title="下载搜狗输入法"></a>下载搜狗输入法</h2><p>自行到<a target="_blank" rel="noopener" href="https://gitee.com/laomocode/fcitx-sogouimebs/releases">https://gitee.com/laomocode/fcitx-sogouimebs/releases</a>下载(不得不说gitee真是屑 连个直链下载都不给)</p>
+<h2 id="下载搜狗输入法"><a class="markdownIt-Anchor" href="#下载搜狗输入法"></a> 下载搜狗输入法</h2>
+<p>自行到<a target="_blank" rel="noopener" href="https://gitee.com/laomocode/fcitx-sogouimebs/releases">https://gitee.com/laomocode/fcitx-sogouimebs/releases</a>下载(不得不说gitee真是屑 连个直链下载都不给)</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg -i sogouimebs.deb</span><br><span class="line">sudo apt install -f</span><br></pre></td></tr></table></figure>
-
 <p>现在一般来说就可以了 如果不行 可以再<strong>重启</strong>一下</p>
-<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>按照自己的习惯<strong>配置</strong>一下</p>
+<h2 id="配置"><a class="markdownIt-Anchor" href="#配置"></a> 配置</h2>
+<p>按照自己的习惯<strong>配置</strong>一下</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fcitx-configtool</span><br></pre></td></tr></table></figure>
-
 <p>完结撒花</p>
 
     </div>
@@ -261,6 +267,23 @@
     
     
     
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>F_Unction
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://f-unction.github.io/2020/04/30/install-sougoupinyin-on-ubuntu20-04/" title="Ubuntu20.04安装搜狗输入法">http://f-unction.github.io/2020/04/30/install-sougoupinyin-on-ubuntu20-04/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
 
       <footer class="post-footer">
           <div class="post-tags">
@@ -336,7 +359,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E8%87%AA%E5%B8%A6ibus"><span class="nav-number">1.</span> <span class="nav-text">卸载自带ibus</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E9%94%AE%E7%9B%98%E6%8F%90%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">卸载键盘提示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85fcitx"><span class="nav-number">3.</span> <span class="nav-text">安装fcitx</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E6%90%9C%E7%8B%97%E8%BE%93%E5%85%A5%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">下载搜狗输入法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">5.</span> <span class="nav-text">配置</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E8%87%AA%E5%B8%A6ibus"><span class="nav-number">1.</span> <span class="nav-text"> 卸载自带ibus</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD%E9%94%AE%E7%9B%98%E6%8F%90%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text"> 卸载键盘提示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85fcitx"><span class="nav-number">3.</span> <span class="nav-text"> 安装fcitx</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E6%90%9C%E7%8B%97%E8%BE%93%E5%85%A5%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text"> 下载搜狗输入法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">5.</span> <span class="nav-text"> 配置</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -352,14 +375,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">5</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -416,8 +439,31 @@
   </span>
   <span class="author" itemprop="copyrightHolder">F_Unction</span>
 </div>
+  <div class="addthis_inline_share_toolbox">
+    <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5f2abc3213f282af" async="async"></script>
+  </div>
 
         
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
 
 
 
@@ -433,7 +479,7 @@
   
   
   <script color='0,0,0' opacity='0.5' zIndex='-1' count='150' src="/lib/canvas-nest/canvas-nest.min.js"></script>
-  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
+  <script size="350" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
   <script src="/lib/anime.min.js"></script>
   <script src="/lib/velocity/velocity.min.js"></script>
   <script src="/lib/velocity/velocity.ui.min.js"></script>
@@ -495,6 +541,8 @@
 
 
 
+
+  
 
   
 
