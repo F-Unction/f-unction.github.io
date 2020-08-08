@@ -1,311 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title>CF20A题解</title>
-    <url>/2020/05/04/cf20a-answer/</url>
-    <content><![CDATA[<p>CF20A [BerOS file system]</p>
-<h2 id="原题"><a class="markdownIt-Anchor" href="#原题"></a> 原题</h2>
-<a id="more"></a>
-<blockquote>
-<h3 id="a-beros-file-system"><a class="markdownIt-Anchor" href="#a-beros-file-system"></a> A. BerOS file system</h3>
-<p>time limit per test: 2 seconds</p>
-<p>memory limit per test: 64 megabytes</p>
-<p>input: standard input</p>
-<p>output: standard output</p>
-<p>The new operating system BerOS has a nice feature. It is possible to use any number of characters ‘/’ as a delimiter in path instead of one traditional ‘/’. For example, strings //usr///local//nginx/sbin// and /usr/local/nginx///sbin are equivalent. The character ‘/’ (or some sequence of such characters) at the end of the path is required only in case of the path to the root directory, which can be represented as single character ‘/’.</p>
-<p>A path called normalized if it contains the smallest possible number of characters ‘/’.</p>
-<p>Your task is to transform a given path to the normalized form.</p>
-<h4 id="input"><a class="markdownIt-Anchor" href="#input"></a> Input</h4>
-<p>The first line of the input contains only lowercase Latin letters and character ‘/’ — the path to some directory. All paths start with at least one character ‘/’. The length of the given line is no more than 100 characters, it is not empty.</p>
-<h4 id="output"><a class="markdownIt-Anchor" href="#output"></a> Output</h4>
-<p>The path in normalized form.</p>
-<h4 id="examples"><a class="markdownIt-Anchor" href="#examples"></a> Examples</h4>
-<h5 id="input-2"><a class="markdownIt-Anchor" href="#input-2"></a> input</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;usr&#x2F;&#x2F;&#x2F;local&#x2F;&#x2F;nginx&#x2F;sbin</span><br></pre></td></tr></table></figure>
-<h5 id="output-2"><a class="markdownIt-Anchor" href="#output-2"></a> output</h5>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;sbin</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h2 id="题解"><a class="markdownIt-Anchor" href="#题解"></a> 题解</h2>
-<p>意思差不多就是要把这个给你的字符串里面重复的<code>/</code>删去 例子很直观了</p>
-<p>一道简单的不能再简单的红题 让我做出了花样</p>
-<p>很多用word等软件给文档<strong>去空行</strong>过的同学们肯定印象深刻 把<code>^p^p</code> 替换成<code>^p</code> 多点两次就行了 这里也可以用到这种思想 (word中<code>^p</code>就是换行的意思)</p>
-<p>替换 就是<code>replace</code> 查了cppreference 发现还真有这么个 <a href="https://en.cppreference.com/w/cpp/string/basic_string/replace">std::string::replace</a> 不过不像C#的<code>string.replace(char, char)</code>那么简单 这个<code>std::string::replace(int pos, int count, string str)</code>是 把<code>string</code>中从<code>pos</code>开始的<code>count</code>个字符替换成<code>str</code></p>
-<h3 id="替换"><a class="markdownIt-Anchor" href="#替换"></a> 替换</h3>
-<p>其实也简单 于是就有了</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>); <span class="comment">//把 //(两个字符)替换成/</span></span><br></pre></td></tr></table></figure>
-<h3 id="重复"><a class="markdownIt-Anchor" href="#重复"></a> 重复</h3>
-<p>但是回想去空行的时候 如果有连续的空行 就要多点两次</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">L1:</span><br><span class="line">a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) != <span class="built_in">string</span>::npos) <span class="comment">//string::npos就是找不到了</span></span><br><span class="line">    <span class="keyword">goto</span> L1; <span class="comment">//别骂我用goto了QAQ</span></span><br></pre></td></tr></table></figure>
-<h3 id="空路径特判"><a class="markdownIt-Anchor" href="#空路径特判"></a> 空路径特判</h3>
-<p>然后RE了 因为题目中说</p>
-<blockquote>
-<p>All paths start with at least one character ‘/’.</p>
-</blockquote>
-<p>所以因为可能路径中并没有<code>//</code> 这样子替换就会RE</p>
-<p>于是</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">L1:</span><br><span class="line">    <span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">        <span class="keyword">goto</span> L2;</span><br><span class="line">    a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    <span class="keyword">goto</span> L1;</span><br><span class="line">L2:</span><br></pre></td></tr></table></figure>
-<h3 id="根目录特判"><a class="markdownIt-Anchor" href="#根目录特判"></a> 根目录特判</h3>
-<p>然后WA了</p>
-<p>因为如果整个路径就一个<code>/</code> 那就会被去掉 于是</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">L1:</span><br><span class="line">    <span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">        <span class="keyword">goto</span> L2;</span><br><span class="line">    a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    <span class="keyword">goto</span> L1;</span><br><span class="line">L2:</span><br><span class="line">    <span class="keyword">if</span> (a[a.length() - <span class="number">1</span>] == <span class="string">&#x27;/&#x27;</span> &amp;&amp; a.length() != <span class="number">1</span>) <span class="comment">//加了个if</span></span><br><span class="line">        a = a.substr(<span class="number">0</span>, a.length() - <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
-<p>终于AC了QAQ</p>
-<h2 id="完整代码"><a class="markdownIt-Anchor" href="#完整代码"></a> 完整代码</h2>
-<p>完整代码</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">string</span> a;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; a;</span><br><span class="line">L1:</span><br><span class="line">    <span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">        <span class="keyword">goto</span> L2;</span><br><span class="line">    a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    <span class="keyword">goto</span> L1;</span><br><span class="line">L2:</span><br><span class="line">    <span class="keyword">if</span> (a[a.length() - <span class="number">1</span>] == <span class="string">&#x27;/&#x27;</span> &amp;&amp; a.length() != <span class="number">1</span>)</span><br><span class="line">        a = a.substr(<span class="number">0</span>, a.length() - <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; a;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <tags>
-        <tag>OI</tag>
-        <tag>题解</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>快速顺序ID池</title>
-    <url>/2020/08/03/fast-id-pool/</url>
-    <content><![CDATA[<h2 id="概论"><a class="markdownIt-Anchor" href="#概论"></a> 概论</h2>
-<p>一个<strong>ID池</strong>应该包含以下操作</p>
-<ul>
-<li>注册ID</li>
-<li>注销ID</li>
-<li>查询某ID是否已经被注册</li>
-</ul>
-<a id="more"></a>
-<h2 id="实现"><a class="markdownIt-Anchor" href="#实现"></a> 实现</h2>
-<p>该文<strong>所有代码来自朋友的Ordinary库 链接在文末</strong></p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">List</span>&lt;<span class="title">uint</span>&gt; unuseds</span> = <span class="keyword">new</span> List&lt;<span class="keyword">uint</span>&gt;();</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">uint</span> Newest &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br></pre></td></tr></table></figure>
-<p><code>unused</code>是被注册后注销的ID<br />
-<code>NewsetId</code>就是字面意思</p>
-<h3 id="初始化"><a class="markdownIt-Anchor" href="#初始化"></a> 初始化</h3>
-<p>自行设置<code>Newest</code>作为ID的起点</p>
-<h3 id="注册id"><a class="markdownIt-Anchor" href="#注册id"></a> 注册ID</h3>
-<p>如果<code>unused</code><strong>非空</strong> 则把一ID从中删除并返回</p>
-<p>否则返回<code>Newest++</code></p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">[<span class="meta">MethodImpl(MethodImplOptions.AggressiveInlining)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">uint</span> <span class="title">Rent</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (unuseds.Count == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> Newest++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> i = unuseds.Count - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">var</span> v = unuseds[i];</span><br><span class="line">        unuseds.RemoveAt(i);</span><br><span class="line">        <span class="keyword">return</span> v;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="注销id"><a class="markdownIt-Anchor" href="#注销id"></a> 注销ID</h3>
-<p>仅需把该ID加入<code>unused</code></p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">[<span class="meta">MethodImpl(MethodImplOptions.AggressiveInlining)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Return</span>(<span class="params"><span class="keyword">uint</span> id</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    unuseds.Add(id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="查询"><a class="markdownIt-Anchor" href="#查询"></a> 查询</h3>
-<p>如果该ID大于<code>Newest</code> 则显然没注册过</p>
-<p>否则在<code>unused</code>中查找 如果找到了 那就没注册过(注册后注销了)</p>
-<p>不然就是注册过</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line">[<span class="meta">MethodImpl(MethodImplOptions.AggressiveInlining)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">bool</span> <span class="title">IsUsed</span>(<span class="params"><span class="keyword">uint</span> id</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (id &gt;= Newest)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> !unuseds.Contains(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2>
-<p>该ID池适合<strong>大量注册少量注销</strong> 或是<strong>注册注销很均匀</strong>的情况</p>
-<p>如果<strong>大量注册后大量注销 内存开销会很大</strong></p>
-<p><strong>朋友的库 有很多实用功能 C#写的 <a href="https://github.com/Erxl/Ordinary">链接</a></strong></p>
-]]></content>
-      <tags>
-        <tag>算法</tag>
-        <tag>C#</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>deepin-wine中QQ或TIM不显示图片</title>
-    <url>/2020/04/30/fix-deepin-wine-qqortim-picture/</url>
-    <content><![CDATA[<p>好不容易给Ubuntu装上了deepin-wine QQ 却发现<strong>头像都是复古头像 图片都加载不出来</strong></p>
-<p>然后发现只需要<strong>禁用IPv6</strong>就可以了(草)</p>
-<a id="more"></a>
-<h2 id="禁ipv6"><a class="markdownIt-Anchor" href="#禁ipv6"></a> 禁IPv6</h2>
-<p>编辑<code>/etc/sysctl.conf</code></p>
-<p>在尾部加入内容如下</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 禁用IPv6</span></span><br><span class="line">net.ipv6.conf.all.disable_ipv6 = 1</span><br><span class="line">net.ipv6.conf.default.disable_ipv6 = 1</span><br><span class="line">net.ipv6.conf.lo.disable_ipv6 = 1</span><br></pre></td></tr></table></figure>
-<h2 id="删除缓存"><a class="markdownIt-Anchor" href="#删除缓存"></a> 删除缓存</h2>
-<p>啊 然后你就<strong>删掉deepin-wine qq的缓存</strong></p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo rm -rf ~/.deepinwine/Deepin-QQ</span><br></pre></td></tr></table></figure>
-<p>然后<strong>重新打开</strong>应该就行了 如果还不行 那就<strong>重启</strong> 如果还不行 那就再<strong>删除缓存</strong> 然后<strong>重新安装</strong>deepin-wine qq</p>
-<p><s>如果还不行 那就是你村子还没通网</s></p>
-<hr />
-<p>2020-5-1</p>
-<p>今天用着用着就翻车了</p>
-<p>刚刚换掉的那一遍还行 不过<strong>重启之后就挂了</strong></p>
-<h2 id="grub禁用ipv6"><a class="markdownIt-Anchor" href="#grub禁用ipv6"></a> grub禁用IPv6</h2>
-<p>所以我们要用grub的方式禁用IPv6</p>
-<p>编辑<code>etc/default/grub</code></p>
-<p>把<code>GRUB_CMDLINE_LINUX=&quot;&quot;</code>修改为<code>GRUB_CMDLINE_LINUX=&quot;ipv6.disable=1&quot;</code> 然后重新清除缓存即可</p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu20.04和Windows10双系统同步时间</title>
-    <url>/2020/05/01/fix-time-on-ubuntu20-04/</url>
-    <content><![CDATA[<p>不知道有没有人发现 前两天的blog<strong>时间不太对</strong></p>
-<p>这个问题昨天刚刚解决 但是因为有点忙 所以没发</p>
-<a id="more"></a>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo timedatectl <span class="built_in">set</span>-local-rtc 1</span><br><span class="line">sudo apt-get install ntpdate</span><br><span class="line">sudo ntpdate time.windows.com</span><br><span class="line">sudo hwclock --localtime --systohc</span><br></pre></td></tr></table></figure>
-<p>不知道为什么我<strong>第三句</strong>貌似<strong>没有</strong>执行<strong>成功</strong> 但是<strong>重启后时间还是被修复了</strong> 既然修复了就不要管那么多了嘛</p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu20.04安装搜狗输入法</title>
-    <url>/2020/04/30/install-sougoupinyin-on-ubuntu20-04/</url>
-    <content><![CDATA[<p>刚刚装了Ubuntu20.04 虽然是LTS 但是因为刚刚发布 也是有很多小问题的</p>
-<p>就比如<strong>搜狗输入法装不上</strong></p>
-<p>主要是因为20.04的软件仓库少点依赖 不过好在我们有大佬从UbuntuKylin提取的专用版搜狗输入法</p>
-<a id="more"></a>
-<h2 id="卸载自带ibus"><a class="markdownIt-Anchor" href="#卸载自带ibus"></a> 卸载自带ibus</h2>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo apt-get remove ibus</span><br><span class="line">sudo apt-get purge ibus</span><br></pre></td></tr></table></figure>
-<h2 id="卸载键盘提示"><a class="markdownIt-Anchor" href="#卸载键盘提示"></a> 卸载键盘提示</h2>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo apt-get remove indicator-keyboard</span><br></pre></td></tr></table></figure>
-<h2 id="安装fcitx"><a class="markdownIt-Anchor" href="#安装fcitx"></a> 安装fcitx</h2>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo apt install fcitx-table-wbpy fcitx-config-gtk</span><br><span class="line">im-config -n fcitx</span><br></pre></td></tr></table></figure>
-<p>此处重启</p>
-<h2 id="下载搜狗输入法"><a class="markdownIt-Anchor" href="#下载搜狗输入法"></a> 下载搜狗输入法</h2>
-<p>自行到<a href="https://gitee.com/laomocode/fcitx-sogouimebs/releases">https://gitee.com/laomocode/fcitx-sogouimebs/releases</a>下载(不得不说gitee真是屑 连个直链下载都不给)</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i sogouimebs.deb</span><br><span class="line">sudo apt install -f</span><br></pre></td></tr></table></figure>
-<p>现在一般来说就可以了 如果不行 可以再<strong>重启</strong>一下</p>
-<h2 id="配置"><a class="markdownIt-Anchor" href="#配置"></a> 配置</h2>
-<p>按照自己的习惯<strong>配置</strong>一下</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">fcitx-configtool</span><br></pre></td></tr></table></figure>
-<p>完结撒花</p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>zsh配置全过程</title>
-    <url>/2020/04/30/install-zsh/</url>
-    <content><![CDATA[<p>装完系统第一件事就是<strong>配置zsh</strong></p>
-<h2 id="安装zsh"><a class="markdownIt-Anchor" href="#安装zsh"></a> 安装zsh</h2>
-<p>这还用说？直接<code>sudo apt install zsh</code></p>
-<h2 id="安装oh-my-zsh"><a class="markdownIt-Anchor" href="#安装oh-my-zsh"></a> 安装oh-my-zsh</h2>
-<a id="more"></a>
-<p>官网上给了一条命令</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sh -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)</span>&quot;</span></span><br></pre></td></tr></table></figure>
-<p>但是因为万恶的GFW 你不管怎么运行都是443</p>
-<p>其实<strong>并不需要挂梯子</strong> 因为github还是可以访问的 你只要到他仓库去 然后手动新建个文件粘贴进去运行就行了</p>
-<h3 id="复制脚本"><a class="markdownIt-Anchor" href="#复制脚本"></a> 复制脚本</h3>
-<ul>
-<li><a href="https://github.com/ohmyzsh/ohmyzsh/blob/master/tools/install.sh">https://github.com/ohmyzsh/ohmyzsh/blob/master/tools/install.sh</a></li>
-</ul>
-<h3 id="保存到文件并执行"><a class="markdownIt-Anchor" href="#保存到文件并执行"></a> 保存到文件并执行</h3>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">touch install.sh</span><br><span class="line">vim install.sh</span><br></pre></td></tr></table></figure>
-<p>此处粘贴网页中的脚本</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">chmod +x install.sh</span><br><span class="line">./install.sh</span><br></pre></td></tr></table></figure>
-<h2 id="安装主题"><a class="markdownIt-Anchor" href="#安装主题"></a> 安装主题</h2>
-<p>主题多种多样 这里我们选<strong>powerlevel10k</strong> 真的<strong>很漂亮</strong> 而且听说新版本的<strong>响应速度没有之前那么慢</strong>了</p>
-<p>p10k的readme给出了安装方法</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k</span><br></pre></td></tr></table></figure>
-<p>然后手动编辑<code>~/.zshrc</code></p>
-<p>把<code>ZSH_THEME=&quot;robbyrussel&quot;</code> 修改成 <code>ZSH_THEME=&quot;powerlevel10k/powerlevel10k&quot;</code></p>
-<p>当然也别忘了<strong>安装字体</strong> 不然乱码等着你</p>
-<h3 id="安装字体"><a class="markdownIt-Anchor" href="#安装字体"></a> 安装字体</h3>
-<ul>
-<li>
-<p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf">MesloLGS NF Regular.ttf</a></p>
-</li>
-<li>
-<p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf">MesloLGS NF Bold.ttf</a></p>
-</li>
-<li>
-<p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf">MesloLGS NF Italic.ttf</a></p>
-</li>
-<li>
-<p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf">MesloLGS NF Bold Italic.ttf</a></p>
-</li>
-</ul>
-<p>装好之后<strong>把终端字体设置为MesloLGS NF Regular</strong> 就可以正常显示特殊符号了</p>
-<h2 id="安装插件"><a class="markdownIt-Anchor" href="#安装插件"></a> 安装<strong>插件</strong></h2>
-<p>zsh除了好看 还要好用 这里推荐我用的两个插件</p>
-<h3 id="incr"><a class="markdownIt-Anchor" href="#incr"></a> incr</h3>
-<p><strong>自动补齐</strong>插件incr</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">wget -P ~/.oh-my-zsh/plugins/incr http://mimosa-pudica.net/src/incr-0.2.zsh</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source ~/.oh-my-zsh/plugins/incr/incr*.zsh&quot;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure>
-<p>这个插件在你<strong>粘贴大量内容时候会很卡</strong> <strong>与p10k的多行模式配合会有一些错误</strong> 但是<strong>不会影响执行结果</strong> 找不到更好用的 将就一下吧</p>
-<h3 id="zsh-syntax-highlighting"><a class="markdownIt-Anchor" href="#zsh-syntax-highlighting"></a> zsh-syntax-highlighting</h3>
-<p><strong>高亮</strong>插件zsh-syntax-highlighting</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting</span><br></pre></td></tr></table></figure>
-<p>然后编辑<code>~/.zshrc</code></p>
-<p>把<code>plugins=(git)</code> 改成<code>plugins=(git zsh-syntax-highlighting)</code></p>
-<h2 id="重启终端"><a class="markdownIt-Anchor" href="#重启终端"></a> 重启终端</h2>
-<p>重启终端 享受你的zsh</p>
-]]></content>
-      <tags>
-        <tag>Linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>矩形的近似密铺</title>
-    <url>/2020/08/05/rect-almost-tessellation/</url>
-    <content><![CDATA[<p><img src="/images/rect-almost-tessellation-1.png" alt="pic1" /></p>
-<a id="more"></a>
-<p>不知道有没有这方面的轮子 于是就自己造了一个<s>方</s>轮子</p>
-<h2 id="准备工作"><a class="markdownIt-Anchor" href="#准备工作"></a> 准备工作</h2>
-<p>定义<code>Rect</code>类</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Rect</span> : <span class="title">IComparable</span>&lt;<span class="title">Rect</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> X &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> Y &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> Width &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> Height &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment">//颜色是做可视化用的</span></span><br><span class="line">    <span class="keyword">public</span> Color Color &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment">//是否被放置</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">bool</span> Done &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Rect</span>(<span class="params"><span class="keyword">int</span> x, <span class="keyword">int</span> y, <span class="keyword">int</span> width, <span class="keyword">int</span> height</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Random rd = <span class="keyword">new</span> Random();</span><br><span class="line"></span><br><span class="line">        X = x;</span><br><span class="line">        Y = y;</span><br><span class="line">        Width = width;</span><br><span class="line">        Height = height;</span><br><span class="line">        Done = <span class="literal">false</span>;</span><br><span class="line">        Color = Color.FromArgb(<span class="number">255</span>, (<span class="keyword">byte</span>)rd.Next(<span class="number">0</span>, <span class="number">255</span>), (<span class="keyword">byte</span>)rd.Next(<span class="number">0</span>, <span class="number">255</span>), (<span class="keyword">byte</span>)rd.Next(<span class="number">0</span>, <span class="number">255</span>));</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//比较函数 要实现 IComparable&lt;Rect&gt;.CompareTo([AllowNull] Rect other)</span></span><br><span class="line">    <span class="comment">//为什么是比较高度呢？ 后面会提到</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">CompareTo</span>(<span class="params">[AllowNull] Rect other</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (Height &gt; other.Height)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (Height &lt; other.Height)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>定义<code>Tessellation</code>函数</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Tessellation</span>(<span class="params"><span class="keyword">int</span> RgnLeft, <span class="keyword">int</span> RgnTop, <span class="keyword">int</span> RgnW, <span class="keyword">int</span> RgnH, <span class="keyword">int</span> RectNum, <span class="keyword">ref</span> Rect[] rects</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="理论研究"><a class="markdownIt-Anchor" href="#理论研究"></a> 理论研究</h2>
-<h3 id="放置"><a class="markdownIt-Anchor" href="#放置"></a> 放置</h3>
-<p>如图是我们<strong>待填充的区域</strong> 称为<code>Rgn</code></p>
-<p><img src="/images/rect-almost-tessellation-2.png" alt="pic2" /></p>
-<p>现在我们往里面放一个<code>rect</code></p>
-<p><img src="/images/rect-almost-tessellation-3.png" alt="pic3" /></p>
-<h3 id="分割"><a class="markdownIt-Anchor" href="#分割"></a> 分割</h3>
-<p>除了黑色的<code>rect</code> 图中还有蓝色的空余<strong>不规则图形</strong></p>
-<p>那我们这才放了一个 还得继续放 放在哪 当然是放在蓝色空闲区域 那我们得先把他变规则</p>
-<p>为了让这个不规则图形<strong>变规则</strong> 我们用一条黑线 分成两部分</p>
-<p>那么为什么<strong>不是竖着分而是横着分</strong>呢 因为在今天的案例(<s>案例就是没有案例</s>)中 我们的数据倾向于<strong>横着铺</strong> 如果你的数据是竖着 那就需要做相应的更改</p>
-<p>分出的两个区域 各信息如下 (其中RectX表示放入该矩形的各信息)</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>RgnLeft</th>
-<th>RgnTop</th>
-<th>RgnW</th>
-<th>RgnH</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Rgn1</td>
-<td>RgnLeft + RectW</td>
-<td>RgnTop</td>
-<td>RgnW - RectW</td>
-<td>RectH</td>
-</tr>
-<tr>
-<td>Rgn2</td>
-<td>RgnLeft</td>
-<td>RgnTop + RectH</td>
-<td>RgnW</td>
-<td>RgnH - RectH</td>
-</tr>
-</tbody>
-</table>
-<p>现在往<code>Rgn1</code>里面放矩形</p>
-<p><img src="/images/rect-almost-tessellation-4.png" alt="pic4" /></p>
-<p>到这里 你应该懂了 后面的操作 就是无限套娃</p>
-<p>是的 <strong>递归</strong></p>
-<h3 id="递归出口"><a class="markdownIt-Anchor" href="#递归出口"></a> 递归出口</h3>
-<p>这很好想</p>
-<ul>
-<li><strong>放不进去</strong>的时候 返回</li>
-<li><strong>矩形用完</strong>的时候 返回</li>
-</ul>
-<h3 id="放置顺序"><a class="markdownIt-Anchor" href="#放置顺序"></a> 放置顺序</h3>
-<p>看图</p>
-<p><img src="/images/rect-almost-tessellation-5.png" alt="pic5" /></p>
-<p>矩形的<strong>高度太小</strong> 导致第一行什么也放不进去</p>
-<p>故而 我们第一行应该优先放<strong>高度大的</strong></p>
-<p>在执行<code>Tessellation</code>函数前 我们应该把矩形<strong>按照高度逆序排序</strong></p>
-<p>这也是<code>Rect</code>类中 <code>CompareTo</code>函数的由来</p>
-<h2 id="代码"><a class="markdownIt-Anchor" href="#代码"></a> 代码</h2>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Tessellation</span>(<span class="params"><span class="keyword">int</span> RgnLeft, <span class="keyword">int</span> RgnTop, <span class="keyword">int</span> RgnW, <span class="keyword">int</span> RgnH, <span class="keyword">int</span> RectNum, <span class="keyword">ref</span> Rect[] rects</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (RectNum != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//遍历</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; RectNum; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//放得进去 而且还没放</span></span><br><span class="line">            <span class="keyword">if</span> (!rects[i].Done &amp;&amp; rects[i].Width &lt;= RgnW &amp;&amp; rects[i].Height &lt;= RgnH)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//递归出口</span></span><br><span class="line">                <span class="keyword">if</span> (i &gt;= RectNum || i &lt; <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (i == RectNum &amp;&amp; rects[i].Done)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                <span class="comment">//放置该矩形</span></span><br><span class="line">                rects[i].X = RgnLeft;</span><br><span class="line">                rects[i].Y = RgnTop;</span><br><span class="line">                rects[i].Done = <span class="literal">true</span>;</span><br><span class="line">				</span><br><span class="line">                <span class="comment">//继续处理分割出的两个Rgn</span></span><br><span class="line">                Tessellation(RgnLeft + rects[i].Width, RgnTop, RgnW - rects[i].Width, rects[i].Height, RectNum, <span class="keyword">ref</span> rects);</span><br><span class="line">                Tessellation(RgnLeft, RgnTop + rects[i].Height, RgnW, RgnH - rects[i].Height, RectNum, <span class="keyword">ref</span> rects);</span><br><span class="line">				</span><br><span class="line">                <span class="comment">//处理完毕 返回</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="完整实现"><a class="markdownIt-Anchor" href="#完整实现"></a> 完整实现</h2>
-<p>算法 + 可视化</p>
-<p>Github仓库 <a href="https://github.com/F-Unction/RectAlmostTessellation">https://github.com/F-Unction/RectAlmostTessellation</a></p>
-<p>求个Star <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi><mi>A</mi><mi>Q</mi></mrow><annotation encoding="application/x-tex">QAQ</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">Q</span><span class="mord mathdefault">A</span><span class="mord mathdefault">Q</span></span></span></span></p>
-<p>下面是Gif效果图</p>
-<p><img src="/images/rect-almost-tessellation-6.gif" alt="pic5" /></p>
-]]></content>
-      <tags>
-        <tag>算法</tag>
-        <tag>C#</tag>
-      </tags>
-  </entry>
+<search> 
+  
+  
+    
+    <entry>
+      <title>动态编译生成CLI软件启动器</title>
+      <link href="/2020/08/08/cli-launcher-generate/"/>
+      <url>/2020/08/08/cli-launcher-generate/</url>
+      
+        <content type="html"><![CDATA[<p>从Linux换到Windows之后 手总是忍不住<code>Ctrl Alt T</code></p><p>后来设置了打开Terminal的快捷键 但是还是不顺心</p><p><strong>Windows的命令行 什么都干不了</strong></p><a id="more"></a><h2 id="情境"><a class="markdownIt-Anchor" href="#情境"></a> 情境</h2><p>本人想要用<strong>命令行启动一切</strong></p><p>但是如果把所有软件的目录都添加到<code>PATH</code> 就会让<code>PATH</code>无比混乱</p><p>于是在新建了一个<code>C:\PathApp\</code> 并且添加到<code>PATH</code></p><p>然后想把软件的快捷方式 放进去</p><p><strong>失败了</strong> 并不能启动 <code>PATH</code>中的快捷方式</p><h2 id="解决方案"><a class="markdownIt-Anchor" href="#解决方案"></a> 解决方案</h2><h3 id="实现启动器"><a class="markdownIt-Anchor" href="#实现启动器"></a> 实现启动器</h3><p>尝试写一个程序 作为启动器 比如我要启动<code>cmd.exe</code></p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Diagnostics;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Launcher</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">class</span> <span class="title">MainClass</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">using</span> (Process myProcess = <span class="keyword">new</span> Process())</span><br><span class="line">            &#123;</span><br><span class="line">                myProcess.StartInfo.WorkingDirectory = System.IO.Directory.GetCurrentDirectory();</span><br><span class="line">                myProcess.StartInfo.UseShellExecute = <span class="literal">false</span>;</span><br><span class="line">                myProcess.StartInfo.FileName = <span class="string">&quot;cmd.exe&quot;</span>;</span><br><span class="line">                myProcess.Start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>可是这样的话 我<strong>没法传参数</strong></p><p>于是</p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span></span><br><span class="line"><span class="function">...</span></span><br><span class="line"><span class="function">    <span class="keyword">string</span> argString</span> = <span class="string">&quot;&quot;</span>;</span><br><span class="line">    <span class="keyword">foreach</span>(<span class="keyword">var</span> Arg <span class="keyword">in</span> args)</span><br><span class="line">    &#123;</span><br><span class="line">        argString += Arg;</span><br><span class="line">    &#125;</span><br><span class="line">...</span><br><span class="line">    myProcess.StartInfo.Arguments = argString;</span><br><span class="line">...</span><br></pre></td></tr></table></figure><h3 id="实现启动器生成器"><a class="markdownIt-Anchor" href="#实现启动器生成器"></a> 实现启动器生成器</h3><p>这里需要用到一个好东西 <strong>动态编译</strong></p><p>能让你调用C#的编译器 把程序内的文本代码编译成C#程序集并输出exe</p><p><strong>爽</strong></p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> Microsoft.CSharp;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.CodeDom.Compiler;</span><br><span class="line"><span class="comment">//别跟我说CodeDom已经过时了 我TM当然知道他过时了 Roslyn微软的文档写的不明不白 鬼知道怎么用 CodeDom真香</span></span><br></pre></td></tr></table></figure><p>然后用户给出两个String</p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Console.Write(<span class="string">&quot;ApplicationName &gt; &quot;</span>);</span><br><span class="line"><span class="keyword">var</span> filename = Console.ReadLine();</span><br><span class="line">Console.Write(<span class="string">&quot;OutputName      &gt; &quot;</span>);</span><br><span class="line"><span class="keyword">var</span> oname = Console.ReadLine();</span><br></pre></td></tr></table></figure><p>然后把代码拼好</p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">string</span> code = <span class="string">@&quot;using System.Diagnostics;</span></span><br><span class="line"><span class="string">                class MainClass</span></span><br><span class="line"><span class="string">                &#123;</span></span><br><span class="line"><span class="string">                    static void Main(string[] args)</span></span><br><span class="line"><span class="string">                    &#123;</span></span><br><span class="line"><span class="string">                        string argString = &quot;&quot;&quot;&quot;;</span></span><br><span class="line"><span class="string">                        foreach(var Arg in args)</span></span><br><span class="line"><span class="string">                        &#123;</span></span><br><span class="line"><span class="string">                            argString += Arg;</span></span><br><span class="line"><span class="string">                        &#125;</span></span><br><span class="line"><span class="string">                        using (Process myProcess = new Process())</span></span><br><span class="line"><span class="string">                        &#123;</span></span><br><span class="line"><span class="string">                            myProcess.StartInfo.WorkingDirectory = System.IO.Directory.GetCurrentDirectory();</span></span><br><span class="line"><span class="string">                            myProcess.StartInfo.UseShellExecute = false;</span></span><br><span class="line"><span class="string">                            myProcess.StartInfo.Arguments = argString;</span></span><br><span class="line"><span class="string">                            myProcess.StartInfo.FileName = &quot;&quot;&quot;</span> + filename.Replace(<span class="string">&quot;\\&quot;</span>, <span class="string">&quot;\\\\&quot;</span>) + <span class="string">@&quot;&quot;&quot;;</span></span><br><span class="line"><span class="string">                            myProcess.Start();</span></span><br><span class="line"><span class="string">                        &#125;</span></span><br><span class="line"><span class="string">                    &#125;</span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">                &quot;</span>;</span><br></pre></td></tr></table></figure><p>一顿操作 动态编译</p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CSharpCodeProvider provider = <span class="keyword">new</span> CSharpCodeProvider();</span><br><span class="line">CompilerParameters parameter = <span class="keyword">new</span> CompilerParameters();</span><br><span class="line"></span><br><span class="line">parameter.ReferencedAssemblies.Add(<span class="string">&quot;System.dll&quot;</span>);</span><br><span class="line"></span><br><span class="line">parameter.GenerateExecutable = <span class="literal">true</span>;</span><br><span class="line">parameter.OutputAssembly = <span class="string">&quot;C:\\PathApp\\&quot;</span> + oname + <span class="string">&quot;.exe&quot;</span>;</span><br><span class="line"><span class="keyword">var</span> results = provider.CompileAssemblyFromSource(parameter, code);</span><br></pre></td></tr></table></figure><p>如果编译没成功 出错了咋办？</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (results.Errors.HasErrors)</span><br><span class="line">&#123;</span><br><span class="line">    Console.WriteLine(results.Errors[0].ToString());</span><br><span class="line">    Console.ReadKey();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>生成 把该文件放到<code>C:\PathApp\</code></p><h2 id="使用示例"><a class="markdownIt-Anchor" href="#使用示例"></a> 使用示例</h2><p><img src="/images/cli-launcher-generate-1.gif" alt="pic1" /></p><h2 id="成品"><a class="markdownIt-Anchor" href="#成品"></a> 成品</h2><p>Github仓库: <a href="https://github.com/F-Unction/CLILauncherGenerator">https://github.com/F-Unction/CLILauncherGenerator</a> <strong>求Star</strong></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> C# </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>矩形的近似密铺</title>
+      <link href="/2020/08/05/rect-almost-tessellation/"/>
+      <url>/2020/08/05/rect-almost-tessellation/</url>
+      
+        <content type="html"><![CDATA[<p><img src="/images/rect-almost-tessellation-1.png" alt="pic1" /></p><a id="more"></a><p>不知道有没有这方面的轮子 于是就自己造了一个<s>方</s>轮子</p><h2 id="准备工作"><a class="markdownIt-Anchor" href="#准备工作"></a> 准备工作</h2><p>定义<code>Rect</code>类</p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Rect</span> : <span class="title">IComparable</span>&lt;<span class="title">Rect</span>&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> X &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> Y &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> Width &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> Height &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment">//颜色是做可视化用的</span></span><br><span class="line">    <span class="keyword">public</span> Color Color &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment">//是否被放置</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">bool</span> Done &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Rect</span>(<span class="params"><span class="keyword">int</span> x, <span class="keyword">int</span> y, <span class="keyword">int</span> width, <span class="keyword">int</span> height</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Random rd = <span class="keyword">new</span> Random();</span><br><span class="line"></span><br><span class="line">        X = x;</span><br><span class="line">        Y = y;</span><br><span class="line">        Width = width;</span><br><span class="line">        Height = height;</span><br><span class="line">        Done = <span class="literal">false</span>;</span><br><span class="line">        Color = Color.FromArgb(<span class="number">255</span>, (<span class="keyword">byte</span>)rd.Next(<span class="number">0</span>, <span class="number">255</span>), (<span class="keyword">byte</span>)rd.Next(<span class="number">0</span>, <span class="number">255</span>), (<span class="keyword">byte</span>)rd.Next(<span class="number">0</span>, <span class="number">255</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//比较函数 要实现 IComparable&lt;Rect&gt;.CompareTo([AllowNull] Rect other)</span></span><br><span class="line">    <span class="comment">//为什么是比较高度呢？ 后面会提到</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">CompareTo</span>(<span class="params">[AllowNull] Rect other</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (Height &gt; other.Height)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (Height &lt; other.Height)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>定义<code>Tessellation</code>函数</p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Tessellation</span>(<span class="params"><span class="keyword">int</span> RgnLeft, <span class="keyword">int</span> RgnTop, <span class="keyword">int</span> RgnW, <span class="keyword">int</span> RgnH, <span class="keyword">int</span> RectNum, <span class="keyword">ref</span> Rect[] rects</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="理论研究"><a class="markdownIt-Anchor" href="#理论研究"></a> 理论研究</h2><h3 id="放置"><a class="markdownIt-Anchor" href="#放置"></a> 放置</h3><p>如图是我们<strong>待填充的区域</strong> 称为<code>Rgn</code></p><p><img src="/images/rect-almost-tessellation-2.png" alt="pic2" /></p><p>现在我们往里面放一个<code>rect</code></p><p><img src="/images/rect-almost-tessellation-3.png" alt="pic3" /></p><h3 id="分割"><a class="markdownIt-Anchor" href="#分割"></a> 分割</h3><p>除了黑色的<code>rect</code> 图中还有蓝色的空余<strong>不规则图形</strong></p><p>那我们这才放了一个 还得继续放 放在哪 当然是放在蓝色空闲区域 那我们得先把他变规则</p><p>为了让这个不规则图形<strong>变规则</strong> 我们用一条黑线 分成两部分</p><p>那么为什么<strong>不是竖着分而是横着分</strong>呢 因为在今天的案例(<s>案例就是没有案例</s>)中 我们的数据倾向于<strong>横着铺</strong> 如果你的数据是竖着 那就需要做相应的更改</p><p>分出的两个区域 各信息如下 (其中RectX表示放入该矩形的各信息)</p><table><thead><tr><th></th><th>RgnLeft</th><th>RgnTop</th><th>RgnW</th><th>RgnH</th></tr></thead><tbody><tr><td>Rgn1</td><td>RgnLeft + RectW</td><td>RgnTop</td><td>RgnW - RectW</td><td>RectH</td></tr><tr><td>Rgn2</td><td>RgnLeft</td><td>RgnTop + RectH</td><td>RgnW</td><td>RgnH - RectH</td></tr></tbody></table><p>现在往<code>Rgn1</code>里面放矩形</p><p><img src="/images/rect-almost-tessellation-4.png" alt="pic4" /></p><p>到这里 你应该懂了 后面的操作 就是无限套娃</p><p>是的 <strong>递归</strong></p><h3 id="递归出口"><a class="markdownIt-Anchor" href="#递归出口"></a> 递归出口</h3><p>这很好想</p><ul><li><strong>放不进去</strong>的时候 返回</li><li><strong>矩形用完</strong>的时候 返回</li></ul><h3 id="放置顺序"><a class="markdownIt-Anchor" href="#放置顺序"></a> 放置顺序</h3><p>看图</p><p><img src="/images/rect-almost-tessellation-5.png" alt="pic5" /></p><p>矩形的<strong>高度太小</strong> 导致第一行什么也放不进去</p><p>故而 我们第一行应该优先放<strong>高度大的</strong></p><p>在执行<code>Tessellation</code>函数前 我们应该把矩形<strong>按照高度逆序排序</strong></p><p>这也是<code>Rect</code>类中 <code>CompareTo</code>函数的由来</p><h2 id="代码"><a class="markdownIt-Anchor" href="#代码"></a> 代码</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Tessellation</span>(<span class="params"><span class="keyword">int</span> RgnLeft, <span class="keyword">int</span> RgnTop, <span class="keyword">int</span> RgnW, <span class="keyword">int</span> RgnH, <span class="keyword">int</span> RectNum, <span class="keyword">ref</span> Rect[] rects</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (RectNum != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//遍历</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; RectNum; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//放得进去 而且还没放</span></span><br><span class="line">            <span class="keyword">if</span> (!rects[i].Done &amp;&amp; rects[i].Width &lt;= RgnW &amp;&amp; rects[i].Height &lt;= RgnH)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//递归出口</span></span><br><span class="line">                <span class="keyword">if</span> (i &gt;= RectNum || i &lt; <span class="number">0</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (i == RectNum &amp;&amp; rects[i].Done)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                <span class="comment">//放置该矩形</span></span><br><span class="line">                rects[i].X = RgnLeft;</span><br><span class="line">                rects[i].Y = RgnTop;</span><br><span class="line">                rects[i].Done = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">                <span class="comment">//继续处理分割出的两个Rgn</span></span><br><span class="line">                Tessellation(RgnLeft + rects[i].Width, RgnTop, RgnW - rects[i].Width, rects[i].Height, RectNum, <span class="keyword">ref</span> rects);</span><br><span class="line">                Tessellation(RgnLeft, RgnTop + rects[i].Height, RgnW, RgnH - rects[i].Height, RectNum, <span class="keyword">ref</span> rects);</span><br><span class="line"></span><br><span class="line">                <span class="comment">//处理完毕 返回</span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="完整实现"><a class="markdownIt-Anchor" href="#完整实现"></a> 完整实现</h2><p>算法 + 可视化</p><p>Github仓库 <a href="https://github.com/F-Unction/RectAlmostTessellation">https://github.com/F-Unction/RectAlmostTessellation</a></p><p>求个Star <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi><mi>A</mi><mi>Q</mi></mrow><annotation encoding="application/x-tex">QAQ</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">Q</span><span class="mord mathdefault">A</span><span class="mord mathdefault">Q</span></span></span></span></p><p>下面是Gif效果图</p><p><img src="/images/rect-almost-tessellation-6.gif" alt="pic5" /></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> C# </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>快速顺序ID池</title>
+      <link href="/2020/08/03/fast-id-pool/"/>
+      <url>/2020/08/03/fast-id-pool/</url>
+      
+        <content type="html"><![CDATA[<h2 id="概论"><a class="markdownIt-Anchor" href="#概论"></a> 概论</h2><p>一个<strong>ID池</strong>应该包含以下操作</p><ul><li>注册ID</li><li>注销ID</li><li>查询某ID是否已经被注册</li></ul><a id="more"></a><h2 id="实现"><a class="markdownIt-Anchor" href="#实现"></a> 实现</h2><p>该文<strong>所有代码来自朋友的Ordinary库 链接在文末</strong></p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">List</span>&lt;<span class="title">uint</span>&gt; unuseds</span> = <span class="keyword">new</span> List&lt;<span class="keyword">uint</span>&gt;();</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">uint</span> Newest &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br></pre></td></tr></table></figure><p><code>unused</code>是被注册后注销的ID<br /><code>NewsetId</code>就是字面意思</p><h3 id="初始化"><a class="markdownIt-Anchor" href="#初始化"></a> 初始化</h3><p>自行设置<code>Newest</code>作为ID的起点</p><h3 id="注册id"><a class="markdownIt-Anchor" href="#注册id"></a> 注册ID</h3><p>如果<code>unused</code><strong>非空</strong> 则把一ID从中删除并返回</p><p>否则返回<code>Newest++</code></p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">MethodImpl(MethodImplOptions.AggressiveInlining)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">uint</span> <span class="title">Rent</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (unuseds.Count == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> Newest++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> i = unuseds.Count - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">var</span> v = unuseds[i];</span><br><span class="line">        unuseds.RemoveAt(i);</span><br><span class="line">        <span class="keyword">return</span> v;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="注销id"><a class="markdownIt-Anchor" href="#注销id"></a> 注销ID</h3><p>仅需把该ID加入<code>unused</code></p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">MethodImpl(MethodImplOptions.AggressiveInlining)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Return</span>(<span class="params"><span class="keyword">uint</span> id</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    unuseds.Add(id);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h3 id="查询"><a class="markdownIt-Anchor" href="#查询"></a> 查询</h3><p>如果该ID大于<code>Newest</code> 则显然没注册过</p><p>否则在<code>unused</code>中查找 如果找到了 那就没注册过(注册后注销了)</p><p>不然就是注册过</p><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[<span class="meta">MethodImpl(MethodImplOptions.AggressiveInlining)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">bool</span> <span class="title">IsUsed</span>(<span class="params"><span class="keyword">uint</span> id</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (id &gt;= Newest)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> !unuseds.Contains(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h2><p>该ID池适合<strong>大量注册少量注销</strong> 或是<strong>注册注销很均匀</strong>的情况</p><p>如果<strong>大量注册后大量注销 内存开销会很大</strong></p><p><strong>朋友的库 有很多实用功能 C#写的 <a href="https://github.com/Erxl/Ordinary">链接</a></strong></p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 算法 </tag>
+            
+            <tag> C# </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>CF20A题解</title>
+      <link href="/2020/05/04/cf20a-answer/"/>
+      <url>/2020/05/04/cf20a-answer/</url>
+      
+        <content type="html"><![CDATA[<p>CF20A [BerOS file system]</p><h2 id="原题"><a class="markdownIt-Anchor" href="#原题"></a> 原题</h2><a id="more"></a><blockquote><h3 id="a-beros-file-system"><a class="markdownIt-Anchor" href="#a-beros-file-system"></a> A. BerOS file system</h3><p>time limit per test: 2 seconds</p><p>memory limit per test: 64 megabytes</p><p>input: standard input</p><p>output: standard output</p><p>The new operating system BerOS has a nice feature. It is possible to use any number of characters ‘/’ as a delimiter in path instead of one traditional ‘/’. For example, strings //usr///local//nginx/sbin// and /usr/local/nginx///sbin are equivalent. The character ‘/’ (or some sequence of such characters) at the end of the path is required only in case of the path to the root directory, which can be represented as single character ‘/’.</p><p>A path called normalized if it contains the smallest possible number of characters ‘/’.</p><p>Your task is to transform a given path to the normalized form.</p><h4 id="input"><a class="markdownIt-Anchor" href="#input"></a> Input</h4><p>The first line of the input contains only lowercase Latin letters and character ‘/’ — the path to some directory. All paths start with at least one character ‘/’. The length of the given line is no more than 100 characters, it is not empty.</p><h4 id="output"><a class="markdownIt-Anchor" href="#output"></a> Output</h4><p>The path in normalized form.</p><h4 id="examples"><a class="markdownIt-Anchor" href="#examples"></a> Examples</h4><h5 id="input-2"><a class="markdownIt-Anchor" href="#input-2"></a> input</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;usr&#x2F;&#x2F;&#x2F;local&#x2F;&#x2F;nginx&#x2F;sbin</span><br></pre></td></tr></table></figure><h5 id="output-2"><a class="markdownIt-Anchor" href="#output-2"></a> output</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;usr&#x2F;local&#x2F;nginx&#x2F;sbin</span><br></pre></td></tr></table></figure></blockquote><h2 id="题解"><a class="markdownIt-Anchor" href="#题解"></a> 题解</h2><p>意思差不多就是要把这个给你的字符串里面重复的<code>/</code>删去 例子很直观了</p><p>一道简单的不能再简单的红题 让我做出了花样</p><p>很多用word等软件给文档<strong>去空行</strong>过的同学们肯定印象深刻 把<code>^p^p</code> 替换成<code>^p</code> 多点两次就行了 这里也可以用到这种思想 (word中<code>^p</code>就是换行的意思)</p><p>替换 就是<code>replace</code> 查了cppreference 发现还真有这么个 <a href="https://en.cppreference.com/w/cpp/string/basic_string/replace">std::string::replace</a> 不过不像C#的<code>string.replace(char, char)</code>那么简单 这个<code>std::string::replace(int pos, int count, string str)</code>是 把<code>string</code>中从<code>pos</code>开始的<code>count</code>个字符替换成<code>str</code></p><h3 id="替换"><a class="markdownIt-Anchor" href="#替换"></a> 替换</h3><p>其实也简单 于是就有了</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>); <span class="comment">//把 //(两个字符)替换成/</span></span><br></pre></td></tr></table></figure><h3 id="重复"><a class="markdownIt-Anchor" href="#重复"></a> 重复</h3><p>但是回想去空行的时候 如果有连续的空行 就要多点两次</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">L1:</span><br><span class="line">a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) != <span class="built_in">string</span>::npos) <span class="comment">//string::npos就是找不到了</span></span><br><span class="line">    <span class="keyword">goto</span> L1; <span class="comment">//别骂我用goto了QAQ</span></span><br></pre></td></tr></table></figure><h3 id="空路径特判"><a class="markdownIt-Anchor" href="#空路径特判"></a> 空路径特判</h3><p>然后RE了 因为题目中说</p><blockquote><p>All paths start with at least one character ‘/’.</p></blockquote><p>所以因为可能路径中并没有<code>//</code> 这样子替换就会RE</p><p>于是</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">L1:</span><br><span class="line">    <span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">        <span class="keyword">goto</span> L2;</span><br><span class="line">    a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    <span class="keyword">goto</span> L1;</span><br><span class="line">L2:</span><br></pre></td></tr></table></figure><h3 id="根目录特判"><a class="markdownIt-Anchor" href="#根目录特判"></a> 根目录特判</h3><p>然后WA了</p><p>因为如果整个路径就一个<code>/</code> 那就会被去掉 于是</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">L1:</span><br><span class="line">    <span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">        <span class="keyword">goto</span> L2;</span><br><span class="line">    a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    <span class="keyword">goto</span> L1;</span><br><span class="line">L2:</span><br><span class="line">    <span class="keyword">if</span> (a[a.length() - <span class="number">1</span>] == <span class="string">&#x27;/&#x27;</span> &amp;&amp; a.length() != <span class="number">1</span>) <span class="comment">//加了个if</span></span><br><span class="line">        a = a.substr(<span class="number">0</span>, a.length() - <span class="number">1</span>);</span><br></pre></td></tr></table></figure><p>终于AC了QAQ</p><h2 id="完整代码"><a class="markdownIt-Anchor" href="#完整代码"></a> 完整代码</h2><p>完整代码</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">string</span> a;</span><br><span class="line">    <span class="built_in">cin</span> &gt;&gt; a;</span><br><span class="line">L1:</span><br><span class="line">    <span class="keyword">if</span> (a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>) == <span class="built_in">string</span>::npos)</span><br><span class="line">        <span class="keyword">goto</span> L2;</span><br><span class="line">    a = a.replace(a.find(<span class="string">&quot;//&quot;</span>, <span class="number">0</span>), <span class="number">2</span>, <span class="string">&quot;/&quot;</span>);</span><br><span class="line">    <span class="keyword">goto</span> L1;</span><br><span class="line">L2:</span><br><span class="line">    <span class="keyword">if</span> (a[a.length() - <span class="number">1</span>] == <span class="string">&#x27;/&#x27;</span> &amp;&amp; a.length() != <span class="number">1</span>)</span><br><span class="line">        a = a.substr(<span class="number">0</span>, a.length() - <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; a;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> OI </tag>
+            
+            <tag> 题解 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Ubuntu20.04和Windows10双系统同步时间</title>
+      <link href="/2020/05/01/fix-time-on-ubuntu20-04/"/>
+      <url>/2020/05/01/fix-time-on-ubuntu20-04/</url>
+      
+        <content type="html"><![CDATA[<p>不知道有没有人发现 前两天的blog<strong>时间不太对</strong></p><p>这个问题昨天刚刚解决 但是因为有点忙 所以没发</p><a id="more"></a><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo timedatectl <span class="built_in">set</span>-local-rtc 1</span><br><span class="line">sudo apt-get install ntpdate</span><br><span class="line">sudo ntpdate time.windows.com</span><br><span class="line">sudo hwclock --localtime --systohc</span><br></pre></td></tr></table></figure><p>不知道为什么我<strong>第三句</strong>貌似<strong>没有</strong>执行<strong>成功</strong> 但是<strong>重启后时间还是被修复了</strong> 既然修复了就不要管那么多了嘛</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>zsh配置全过程</title>
+      <link href="/2020/04/30/install-zsh/"/>
+      <url>/2020/04/30/install-zsh/</url>
+      
+        <content type="html"><![CDATA[<p>装完系统第一件事就是<strong>配置zsh</strong></p><h2 id="安装zsh"><a class="markdownIt-Anchor" href="#安装zsh"></a> 安装zsh</h2><p>这还用说？直接<code>sudo apt install zsh</code></p><h2 id="安装oh-my-zsh"><a class="markdownIt-Anchor" href="#安装oh-my-zsh"></a> 安装oh-my-zsh</h2><a id="more"></a><p>官网上给了一条命令</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sh -c <span class="string">&quot;<span class="subst">$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)</span>&quot;</span></span><br></pre></td></tr></table></figure><p>但是因为万恶的GFW 你不管怎么运行都是443</p><p>其实<strong>并不需要挂梯子</strong> 因为github还是可以访问的 你只要到他仓库去 然后手动新建个文件粘贴进去运行就行了</p><h3 id="复制脚本"><a class="markdownIt-Anchor" href="#复制脚本"></a> 复制脚本</h3><ul><li><a href="https://github.com/ohmyzsh/ohmyzsh/blob/master/tools/install.sh">https://github.com/ohmyzsh/ohmyzsh/blob/master/tools/install.sh</a></li></ul><h3 id="保存到文件并执行"><a class="markdownIt-Anchor" href="#保存到文件并执行"></a> 保存到文件并执行</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">touch install.sh</span><br><span class="line">vim install.sh</span><br></pre></td></tr></table></figure><p>此处粘贴网页中的脚本</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod +x install.sh</span><br><span class="line">./install.sh</span><br></pre></td></tr></table></figure><h2 id="安装主题"><a class="markdownIt-Anchor" href="#安装主题"></a> 安装主题</h2><p>主题多种多样 这里我们选<strong>powerlevel10k</strong> 真的<strong>很漂亮</strong> 而且听说新版本的<strong>响应速度没有之前那么慢</strong>了</p><p>p10k的readme给出了安装方法</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/custom/themes/powerlevel10k</span><br></pre></td></tr></table></figure><p>然后手动编辑<code>~/.zshrc</code></p><p>把<code>ZSH_THEME=&quot;robbyrussel&quot;</code> 修改成 <code>ZSH_THEME=&quot;powerlevel10k/powerlevel10k&quot;</code></p><p>当然也别忘了<strong>安装字体</strong> 不然乱码等着你</p><h3 id="安装字体"><a class="markdownIt-Anchor" href="#安装字体"></a> 安装字体</h3><ul><li><p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf">MesloLGS NF Regular.ttf</a></p></li><li><p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf">MesloLGS NF Bold.ttf</a></p></li><li><p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf">MesloLGS NF Italic.ttf</a></p></li><li><p><a href="https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf">MesloLGS NF Bold Italic.ttf</a></p></li></ul><p>装好之后<strong>把终端字体设置为MesloLGS NF Regular</strong> 就可以正常显示特殊符号了</p><h2 id="安装插件"><a class="markdownIt-Anchor" href="#安装插件"></a> 安装<strong>插件</strong></h2><p>zsh除了好看 还要好用 这里推荐我用的两个插件</p><h3 id="incr"><a class="markdownIt-Anchor" href="#incr"></a> incr</h3><p><strong>自动补齐</strong>插件incr</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget -P ~/.oh-my-zsh/plugins/incr http://mimosa-pudica.net/src/incr-0.2.zsh</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;source ~/.oh-my-zsh/plugins/incr/incr*.zsh&quot;</span> &gt;&gt; ~/.zshrc</span><br><span class="line"><span class="built_in">source</span> ~/.zshrc</span><br></pre></td></tr></table></figure><p>这个插件在你<strong>粘贴大量内容时候会很卡</strong> <strong>与p10k的多行模式配合会有一些错误</strong> 但是<strong>不会影响执行结果</strong> 找不到更好用的 将就一下吧</p><h3 id="zsh-syntax-highlighting"><a class="markdownIt-Anchor" href="#zsh-syntax-highlighting"></a> zsh-syntax-highlighting</h3><p><strong>高亮</strong>插件zsh-syntax-highlighting</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting</span><br></pre></td></tr></table></figure><p>然后编辑<code>~/.zshrc</code></p><p>把<code>plugins=(git)</code> 改成<code>plugins=(git zsh-syntax-highlighting)</code></p><h2 id="重启终端"><a class="markdownIt-Anchor" href="#重启终端"></a> 重启终端</h2><p>重启终端 享受你的zsh</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>deepin-wine中QQ或TIM不显示图片</title>
+      <link href="/2020/04/30/fix-deepin-wine-qqortim-picture/"/>
+      <url>/2020/04/30/fix-deepin-wine-qqortim-picture/</url>
+      
+        <content type="html"><![CDATA[<p>好不容易给Ubuntu装上了deepin-wine QQ 却发现<strong>头像都是复古头像 图片都加载不出来</strong></p><p>然后发现只需要<strong>禁用IPv6</strong>就可以了(草)</p><a id="more"></a><h2 id="禁ipv6"><a class="markdownIt-Anchor" href="#禁ipv6"></a> 禁IPv6</h2><p>编辑<code>/etc/sysctl.conf</code></p><p>在尾部加入内容如下</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 禁用IPv6</span></span><br><span class="line">net.ipv6.conf.all.disable_ipv6 = 1</span><br><span class="line">net.ipv6.conf.default.disable_ipv6 = 1</span><br><span class="line">net.ipv6.conf.lo.disable_ipv6 = 1</span><br></pre></td></tr></table></figure><h2 id="删除缓存"><a class="markdownIt-Anchor" href="#删除缓存"></a> 删除缓存</h2><p>啊 然后你就<strong>删掉deepin-wine qq的缓存</strong></p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo rm -rf ~/.deepinwine/Deepin-QQ</span><br></pre></td></tr></table></figure><p>然后<strong>重新打开</strong>应该就行了 如果还不行 那就<strong>重启</strong> 如果还不行 那就再<strong>删除缓存</strong> 然后<strong>重新安装</strong>deepin-wine qq</p><p><s>如果还不行 那就是你村子还没通网</s></p><hr /><p>2020-5-1</p><p>今天用着用着就翻车了</p><p>刚刚换掉的那一遍还行 不过<strong>重启之后就挂了</strong></p><h2 id="grub禁用ipv6"><a class="markdownIt-Anchor" href="#grub禁用ipv6"></a> grub禁用IPv6</h2><p>所以我们要用grub的方式禁用IPv6</p><p>编辑<code>etc/default/grub</code></p><p>把<code>GRUB_CMDLINE_LINUX=&quot;&quot;</code>修改为<code>GRUB_CMDLINE_LINUX=&quot;ipv6.disable=1&quot;</code> 然后重新清除缓存即可</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Ubuntu20.04安装搜狗输入法</title>
+      <link href="/2020/04/30/install-sougoupinyin-on-ubuntu20-04/"/>
+      <url>/2020/04/30/install-sougoupinyin-on-ubuntu20-04/</url>
+      
+        <content type="html"><![CDATA[<p>刚刚装了Ubuntu20.04 虽然是LTS 但是因为刚刚发布 也是有很多小问题的</p><p>就比如<strong>搜狗输入法装不上</strong></p><p>主要是因为20.04的软件仓库少点依赖 不过好在我们有大佬从UbuntuKylin提取的专用版搜狗输入法</p><a id="more"></a><h2 id="卸载自带ibus"><a class="markdownIt-Anchor" href="#卸载自带ibus"></a> 卸载自带ibus</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove ibus</span><br><span class="line">sudo apt-get purge ibus</span><br></pre></td></tr></table></figure><h2 id="卸载键盘提示"><a class="markdownIt-Anchor" href="#卸载键盘提示"></a> 卸载键盘提示</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get remove indicator-keyboard</span><br></pre></td></tr></table></figure><h2 id="安装fcitx"><a class="markdownIt-Anchor" href="#安装fcitx"></a> 安装fcitx</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install fcitx-table-wbpy fcitx-config-gtk</span><br><span class="line">im-config -n fcitx</span><br></pre></td></tr></table></figure><p>此处重启</p><h2 id="下载搜狗输入法"><a class="markdownIt-Anchor" href="#下载搜狗输入法"></a> 下载搜狗输入法</h2><p>自行到<a href="https://gitee.com/laomocode/fcitx-sogouimebs/releases">https://gitee.com/laomocode/fcitx-sogouimebs/releases</a>下载(不得不说gitee真是屑 连个直链下载都不给)</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg -i sogouimebs.deb</span><br><span class="line">sudo apt install -f</span><br></pre></td></tr></table></figure><p>现在一般来说就可以了 如果不行 可以再<strong>重启</strong>一下</p><h2 id="配置"><a class="markdownIt-Anchor" href="#配置"></a> 配置</h2><p>按照自己的习惯<strong>配置</strong>一下</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fcitx-configtool</span><br></pre></td></tr></table></figure><p>完结撒花</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> Linux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+  
+  
 </search>
